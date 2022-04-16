@@ -8,6 +8,8 @@ function doMagic () {
     let resultArray = [];
 
     const regexExpIpAddress = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    const regexUrl = /^http.*/;
+    const regexTcpUdp = /^(TCP|UDP).*/;
 
     let splitted = task.value.trim().split(/\r?\n/);
     splitted = splitted.filter(Boolean);
@@ -18,15 +20,19 @@ function doMagic () {
 
     let ipAddresses = [];
     let protocols = [];
+    let urls = [];
     splitted.forEach((value, index, array) => {
         const potentialIpAddress = value.trim().split(' ')[0];
         if (regexExpIpAddress.test(potentialIpAddress)) {
             ipAddresses.push(potentialIpAddress);
             protocols.push(value.replace(potentialIpAddress + ' ', ''));
+        } else if (regexUrl.test(value.trim())) {
+            urls.push(value.trim());
         }
     });
     console.log(ipAddresses);
     console.log(protocols);
+    console.log(urls);
     protocols = protocols.map((value, index, array) => {
         return value.slice(1, -1);
     });
@@ -47,9 +53,14 @@ function doMagic () {
             return a[0] + ' ' + a[1] + ':' + a[2];
         });
     });
+    urls.forEach((url) => {
+        resultArray.push(url);
+    });
     protocols.forEach((protocolMap) => {
         protocolMap.forEach((value, index, array) => {
-            resultArray.push(value);
+            if (regexTcpUdp.test(value)) {
+                resultArray.push(value);
+            }
         })
     })
 
@@ -59,7 +70,3 @@ function doMagic () {
 btn.addEventListener('click', event => {
     doMagic();
 });
-
-
-
-

@@ -54,7 +54,7 @@ function doMagic () {
         });
     });
     urls.forEach((url) => {
-        resultArray.push(url);
+        resultArray.push('GET ' + url);
     });
     protocols.forEach((protocolMap) => {
         protocolMap.forEach((value, index, array) => {
